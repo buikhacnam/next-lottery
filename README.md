@@ -16,6 +16,14 @@ its provider `MoralisProvider`:
 	</MoralisProvider>
 ```
 
+### web3uikit
+
+Github: https://github.com/web3ui/web3uikit
+
+```
+yarn add web3uikit
+```
+
 ## Next.js Getting Started
 
 First, run the development server:
