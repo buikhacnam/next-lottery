@@ -1,4 +1,4 @@
-### react-moralis
+## react-moralis
 
 Document: https://www.npmjs.com/package/react-moralis
 
@@ -16,7 +16,27 @@ its provider `MoralisProvider`:
 	</MoralisProvider>
 ```
 
-### web3uikit
+### useWeb3Contract()
+
+github: https://github.com/MoralisWeb3/react-moralis#useweb3contract
+
+In this project we also want to test the function call on local network.
+So cd to the hardhat Lottery contract and run the following command:
+
+```
+yarn hardhat node
+```
+Or deploy the contract on a test network:
+
+```
+yarn hardhat deploy --network rinkeby
+```
+
+It will generate 2 files: `abi.json` and `contractAddress.json` inside the constant folder.
+
+Then we can copy the constants folder from there to this current project.
+
+## web3uikit
 
 Github: https://github.com/web3ui/web3uikit
 
