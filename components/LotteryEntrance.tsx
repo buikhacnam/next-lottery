@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { useWeb3Contract, useMoralis } from 'react-moralis'
 import { contractAddresses, abi } from '../constants'
-import { BigNumber, ethers } from 'ethers'
+import { BigNumber, ethers, ContractTransaction } from 'ethers'
 import { useNotification } from 'web3uikit'
 
 interface contractAddressesInterface {
@@ -15,8 +15,9 @@ export default function LotteryEntrance() {
 	const raffleAddress = chainId in addresses ? addresses[chainId][0] : null
 
 	const [entranceFee, setEntranceFee] = useState('0')
+	const [numPlayers, setNumPlayers] = useState('0')
+	const [recentWinner, setRecentWinner] = useState('0')
 
-	console.log('raffle address', raffleAddress)
 	const { runContractFunction: getEntranceFee } = useWeb3Contract({
 		contractAddress: raffleAddress!,
 		abi: abi,
@@ -31,30 +32,65 @@ export default function LotteryEntrance() {
 		isFetching,
 	} = useWeb3Contract({
 		abi: abi,
-		contractAddress: raffleAddress!, // specify the networkId
+		contractAddress: raffleAddress!,
 		functionName: 'enterRaffle',
 		params: {},
 		msgValue: entranceFee,
 	})
 
+	const { runContractFunction: getNumberOfPlayers } = useWeb3Contract({
+		abi: abi,
+		contractAddress: raffleAddress!,
+		functionName: 'getNumberOfPlayers',
+		params: {},
+	})
+
+	const { runContractFunction: getRecentWinner } = useWeb3Contract({
+		abi: abi,
+		contractAddress: raffleAddress!,
+		functionName: 'getRecentWinner',
+		params: {},
+	})
+
 	useEffect(() => {
 		if (isWeb3Enabled) {
-			console.log('run get enrtance fee')
-			  getEntracenFeeFn()
+			fetchEntranceFee()
+			fetchNumPlayers()
+			fetchRecentWinner()
 		}
 	}, [isWeb3Enabled])
 
-	const getEntracenFeeFn = async () => {
-		const res: any = await getEntranceFee({
-			onError: (error: any) => console.log(error),
+	const fetchEntranceFee = async () => {
+		const res = await getEntranceFee({
+			onError: (error: any) =>
+				console.log('getEntranceFee ERROR: ', error),
 		})
-		console.log('res from ', chainId, ' ', res.toString())
-		setEntranceFee(res.toString())
+		const bigNumber = res as BigNumber
+		console.log('entrance fee from ', chainId, ' ', bigNumber.toString())
+		setEntranceFee(bigNumber.toString())
 	}
 
-	const handleSuccess = async function () {
+	const fetchNumPlayers = async () => {
+		const res: any = await getNumberOfPlayers({
+			onError: (error: any) =>
+				console.log('getNumPlayers ERROR: ', error),
+		})
+		console.log('number of players from ', chainId, ' ', res.toString())
+		setNumPlayers(res.toString())
+	}
+
+	const fetchRecentWinner = async () => {
+		const res: any = await getRecentWinner({
+			onError: (error: any) =>
+				console.log('getRecentWinner ERROR: ', error),
+		})
+		console.log('recent winner from ', chainId, ' ', res.toString())
+		setRecentWinner(res.toString())
+	}
+
+	const handleSuccess = async function (tx: ContractTransaction) {
+		await tx.wait(1)
 		handleNewNotification()
-		// updateUI()
 	}
 
 	const handleNewNotification = function () {
@@ -66,6 +102,9 @@ export default function LotteryEntrance() {
 			position: 'topR',
 			icon: 'bell',
 		})
+		fetchEntranceFee()
+		fetchNumPlayers()
+		fetchRecentWinner()
 	}
 
 	return (
@@ -75,7 +114,7 @@ export default function LotteryEntrance() {
 				onClick={async function () {
 					console.log('onclick enter raffle')
 					await enterRaffle({
-						onSuccess: handleSuccess,
+						onSuccess: (tx) =>  handleSuccess(tx as ContractTransaction),
 						onError: (error: any) => console.log(error),
 					})
 				}}
@@ -87,8 +126,12 @@ export default function LotteryEntrance() {
 					<div>Enter Raffle</div>
 				)}
 			</button>
-			<div>Entrance Fee: {ethers.utils.formatUnits(entranceFee, "ether")} ETH</div>
-
+			<div>
+				Entrance Fee: {ethers.utils.formatUnits(entranceFee, 'ether')}{' '}
+				ETH
+			</div>
+			<div>Number Of Players: {numPlayers} </div>
+			<div> Recent Winner: {recentWinner} </div>
 		</div>
 	)
 }
