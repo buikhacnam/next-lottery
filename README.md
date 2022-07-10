@@ -44,6 +44,25 @@ Github: https://github.com/web3ui/web3uikit
 yarn add web3uikit
 ```
 
+## Deploy the front-end on IPFS
+
+- Download the desktop app here: https://github.com/ipfs/ipfs-desktop/releases
+
+- Download the companion extenstion here: https://docs.ipfs.io/install/ipfs-companion/
+
+- Build the front-end with `yarn build`
+
+- Export the app to `out` folder: `yarn export`
+
+- Import the `out` folder to IPFS files: I use the desktop app to do this.
+
+- Set pinning to local node
+
+- Copy the CID and open it in the browser: `ipfs://{CID}`
+
+
+
+
 ## Next.js Getting Started
 
 First, run the development server:
