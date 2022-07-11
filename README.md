@@ -1,3 +1,7 @@
+# Lottery Smart Contract Web App
+
+The project using the [Lottery Smart Contract](https://github.com/buikhacnam/hardhat-lottery)
+
 ## react-moralis
 
 Document: https://www.npmjs.com/package/react-moralis
