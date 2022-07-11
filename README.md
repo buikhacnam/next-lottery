@@ -60,7 +60,13 @@ yarn add web3uikit
 
 - Copy the CID and open it in the browser: `ipfs://{CID}`
 
+## [fleek.co](https://fleek.co)
 
+You may want to edit the command from npm to yarn:
+
+```
+yarn install && yarn run build && yarn next export
+```
 
 
 ## Next.js Getting Started
